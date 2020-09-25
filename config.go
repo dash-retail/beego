@@ -23,11 +23,11 @@ import (
 	"strings"
 	"crypto/tls"
 
-	"github.com/astaxie/beego/config"
-	"github.com/astaxie/beego/context"
-	"github.com/astaxie/beego/logs"
-	"github.com/astaxie/beego/session"
-	"github.com/astaxie/beego/utils"
+	"github.com/dash-retail/beego/config"
+	"github.com/dash-retail/beego/context"
+	"github.com/dash-retail/beego/logs"
+	"github.com/dash-retail/beego/session"
+	"github.com/dash-retail/beego/utils"
 )
 
 // Config is the main struct for BConfig

@@ -193,7 +193,7 @@ checkType:
 		}
 		fieldType = f.FieldType()
 		if fieldType&IsRelField > 0 {
-			err = fmt.Errorf("unsupport type custom field, please refer to https://github.com/astaxie/beego/blob/master/orm/models_fields.go#L24-L42")
+			err = fmt.Errorf("unsupport type custom field, please refer to https://github.com/dash-retail/beego/blob/master/orm/models_fields.go#L24-L42")
 			goto end
 		}
 	default:
@@ -416,7 +416,7 @@ checkType:
 				err = fmt.Errorf("auto primary key only support int, int32, int64, uint, uint32, uint64 but found `%s`", addrField.Elem().Kind())
 				goto end
 			}
-			fi.pk = true
+			// fi.pk = true
 		}
 		fi.null = false
 		fi.index = false

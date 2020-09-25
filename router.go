@@ -27,11 +27,11 @@ import (
 	"sync"
 	"time"
 
-	beecontext "github.com/astaxie/beego/context"
-	"github.com/astaxie/beego/context/param"
-	"github.com/astaxie/beego/logs"
-	"github.com/astaxie/beego/toolbox"
-	"github.com/astaxie/beego/utils"
+	beecontext "github.com/dash-retail/beego/context"
+	"github.com/dash-retail/beego/context/param"
+	"github.com/dash-retail/beego/logs"
+	"github.com/dash-retail/beego/toolbox"
+	"github.com/dash-retail/beego/utils"
 )
 
 // default filter execution points

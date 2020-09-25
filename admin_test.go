@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/astaxie/beego/toolbox"
+	"github.com/dash-retail/beego/toolbox"
 )
 
 type SampleDatabaseCheck struct {
