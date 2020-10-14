@@ -61,6 +61,8 @@ checkColumn:
 		col = fmt.Sprintf(T["string-char"], fieldSize)
 	case TypeTextField:
 		col = T["string-text"]
+	case TypeRealBigIntegerField:
+		col = T["bigint"]
 	case TypeTimeField:
 		col = T["time.Time-clock"]
 	case TypeDateField:
@@ -197,7 +199,7 @@ func getDbCreateSQL(al *alias) (sqls []string, tableIndexes map[string][]dbIndex
 			if strings.Contains(column, "%COL%") {
 				column = strings.Replace(column, "%COL%", fi.column, -1)
 			}
-			
+
 			if fi.description != "" && al.Driver!=DRSqlite {
 				column += " " + fmt.Sprintf("COMMENT '%s'",fi.description)
 			}
@@ -294,7 +296,7 @@ func getColumnDefault(fi *fieldInfo) string {
 	case TypeBitField, TypeSmallIntegerField, TypeIntegerField,
 		TypeBigIntegerField, TypePositiveBitField, TypePositiveSmallIntegerField,
 		TypePositiveIntegerField, TypePositiveBigIntegerField, TypeFloatField,
-		TypeDecimalField:
+		TypeDecimalField, TypeRealBigIntegerField:
 		t = " DEFAULT %s "
 		d = "0"
 	case TypeBooleanField:

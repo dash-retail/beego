@@ -49,6 +49,7 @@ var mysqlTypes = map[string]string{
 	"string":          "varchar(%d)",
 	"string-char":     "char(%d)",
 	"string-text":     "longtext",
+	"bigint":          "decimal(65,0)",
 	"time.Time-date":  "date",
 	"time.Time":       "datetime",
 	"int8":            "tinyint",

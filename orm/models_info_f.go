@@ -17,6 +17,7 @@ package orm
 import (
 	"errors"
 	"fmt"
+	"math/big"
 	"reflect"
 	"strings"
 )
@@ -241,9 +242,16 @@ checkType:
 			}
 		}
 
-		fieldType, err = getFieldType(addrField)
-		if err != nil {
-			goto end
+		if addrField.IsNil() {
+			switch sf.Type {
+			case reflect.TypeOf(new(big.Int)):
+				fieldType = TypeRealBigIntegerField
+			}
+		} else {
+			fieldType, err = getFieldType(addrField)
+			if err != nil {
+				goto end
+			}
 		}
 		if fieldType == TypeVarCharField {
 			switch tags["type"] {
@@ -455,6 +463,8 @@ checkType:
 			_, err = v.Uint32()
 		case TypePositiveBigIntegerField:
 			_, err = v.Uint64()
+		case TypeRealBigIntegerField:
+			_, err = v.BigInt()
 		}
 		if err != nil {
 			tag, tagValue = "default", tags["default"]

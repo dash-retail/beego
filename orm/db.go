@@ -18,6 +18,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"math/big"
 	"reflect"
 	"strings"
 	"time"
@@ -128,6 +129,16 @@ func (d *dbBase) collectFieldValue(mi *modelInfo, fi *fieldInfo, ind reflect.Val
 			value = f.RawValue()
 		} else {
 			switch fi.fieldType {
+			case TypeRealBigIntegerField:
+				value = field.Interface()
+				if field.IsNil() {
+					value = "0"
+				} else {
+					if t, ok := value.(*big.Int); ok {
+						value = t.String()
+					}
+				}
+
 			case TypeBooleanField:
 				if nb, ok := field.Interface().(sql.NullBool); ok {
 					value = nil
@@ -354,6 +365,12 @@ func (d *dbBase) Read(q dbQuerier, mi *modelInfo, ind reflect.Value, tz *time.Lo
 	for i := range refs {
 		var ref interface{}
 		refs[i] = &ref
+
+		fieldType := mi.fields.fieldsDB[i].sf.Type
+		if fieldType == reflect.TypeOf(new(big.Int)) {
+			var a sql.NullString
+			refs[i] = &a
+		}
 	}
 
 	d.ins.ReplaceMarks(&query)
@@ -1042,6 +1059,11 @@ func (d *dbBase) ReadBatch(q dbQuerier, qs *querySet, mi *modelInfo, cond *Condi
 	for i := range refs {
 		var ref interface{}
 		refs[i] = &ref
+		fieldType := mi.fields.fieldsDB[i].sf.Type
+		if fieldType == reflect.TypeOf(new(big.Int)) {
+			var a sql.NullString
+			refs[i] = &a
+		}
 	}
 
 	defer rs.Close()
@@ -1285,6 +1307,20 @@ func (d *dbBase) convertValueFromDB(fi *fieldInfo, val interface{}, tz *time.Loc
 
 setValue:
 	switch {
+	case fieldType == TypeRealBigIntegerField:
+		if nullstring, ok := val.(sql.NullString); ok {
+			if nullstring.Valid == false {
+				value = nil
+				goto end
+			}
+			v := new(big.Int)
+			tErr = v.UnmarshalText([]byte(nullstring.String))
+			if tErr == nil {
+				value = v
+				goto end
+			}
+		}
+
 	case fieldType == TypeBooleanField:
 		if str == nil {
 			switch v := val.(type) {
@@ -1373,6 +1409,8 @@ setValue:
 				_, err = str.Uint32()
 			case TypePositiveBigIntegerField:
 				_, err = str.Uint64()
+			case TypeRealBigIntegerField:
+				_, err = str.BigInt()
 			}
 			if err != nil {
 				tErr = err
@@ -1534,6 +1572,11 @@ setValue:
 		if value != nil {
 			v := value.(int64)
 			field.Set(reflect.ValueOf(&v))
+		}
+	case fieldType == TypeRealBigIntegerField && field.Kind() == reflect.Ptr:
+		if value != nil {
+			v := value.(*big.Int)
+			field.Set(reflect.ValueOf(v))
 		}
 	case fieldType&IsIntegerField > 0:
 		if fieldType&IsPositiveIntegerField > 0 {
@@ -1700,6 +1743,11 @@ func (d *dbBase) ReadValues(q dbQuerier, qs *querySet, mi *modelInfo, cond *Cond
 	for i := range refs {
 		var ref interface{}
 		refs[i] = &ref
+		fieldType := mi.fields.fieldsDB[i].sf.Type
+		if fieldType == reflect.TypeOf(new(big.Int)) {
+			var a sql.NullString
+			refs[i] = &a
+		}
 	}
 
 	defer rs.Close()

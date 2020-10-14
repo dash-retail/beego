@@ -33,6 +33,7 @@ const (
 	TypeSmallIntegerField
 	TypeIntegerField
 	TypeBigIntegerField
+	TypeRealBigIntegerField
 	TypePositiveBitField
 	TypePositiveSmallIntegerField
 	TypePositiveIntegerField

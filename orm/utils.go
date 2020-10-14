@@ -149,6 +149,13 @@ func (f StrTo) Uint64() (uint64, error) {
 	return v, err
 }
 
+// BigInt string to *big.Int
+func (f StrTo) BigInt() (*big.Int, error) {
+	v := new(big.Int)
+	err := v.UnmarshalText([]byte(f.String()))
+	return v, err
+}
+
 // String string to string
 func (f StrTo) String() string {
 	if f.Exist() {
