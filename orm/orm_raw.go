@@ -17,6 +17,7 @@ package orm
 import (
 	"database/sql"
 	"fmt"
+	"math/big"
 	"reflect"
 	"time"
 
@@ -155,6 +156,19 @@ func (o *rawSet) setFieldValue(ind reflect.Value, value interface{}) {
 			return
 		}
 		switch ind.Interface().(type) {
+		case big.Int:
+			var str string
+			switch d := value.(type) {
+			case []byte:
+				str = string(d)
+			case string:
+				str = d
+			}
+			if str != "" {
+				b, _ := new(big.Int).SetString(str, 10)
+				ind.Set(reflect.ValueOf(*b))
+			}
+
 		case time.Time:
 			var str string
 			switch d := value.(type) {
